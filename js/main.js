@@ -1,0 +1,115 @@
+const getRandomInteger = (a, b) => {
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
+  const result = Math.random() * (upper - lower + 1) + lower;
+  return Math.floor(result);
+};
+
+const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
+
+let photoQuantity = 25;
+
+let lastId = 0;
+
+let generateId = function () {
+  lastId += 1;
+  return lastId;
+};
+
+let urlNumber = 0;
+
+let generateUrl = function () {
+  urlNumber += 1;
+  return 'photos/' + urlNumber + '.jpg';
+};
+
+let photoDescriptions = [
+  "Пляж в моем отеле",
+  "Иду на пляж",
+  "Солнечный день на море",
+  "Встретил девушку-фотографа",
+  "Забавный обед в отеле",
+  "Моя машина",
+  "Перекус в стиле минимализма",
+  "Натуральный морс из свежих ягод",
+  "Самолеты летают прямо над головой",
+  "Необычное решение для хранения обуви",
+  "Дорога к морю",
+  "Увидел интересный кастом для фар",
+  "Изысканный обед",
+  "Увидел в интернете милого кота",
+  "Идеальные тапки для моего дома",
+  "Пролетаем над облаками",
+  "Пришли на концерт хорового пения",
+  "Эстетика старых машин",
+  "Очень нужная вещь, постоянно натыкаюсь на своего кота ночью",
+  "Дворик в тропическом стиле",
+  "Ужин в стиле ЗОЖ",
+  "Волшебный закат",
+  "Встретил крабика на пляже",
+  "Зажигательная атмосфера на концерте",
+  "Отправились в сафари на джипе"
+];
+
+let descriptionNumber = 0;
+
+let generateDescription = () => photoDescriptions[descriptionNumber++];
+
+const usedIds = [];
+
+let generateRandomId = function (min, max) {
+  let currentId = getRandomInteger(min, max);
+  while (usedIds.includes(currentId)) {
+    currentId = getRandomInteger(min, max);
+  }
+  usedIds.push(currentId);
+  return currentId;
+};
+
+let generateAvatar = () => 'img/avatar-' + getRandomInteger(1, 6) + '.svg';
+
+let commentMessages = [
+  "Всё отлично!",
+  "В целом всё неплохо. Но не всё.",
+  "Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.",
+  "Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.",
+  "Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.",
+  "Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!"
+];
+
+let commentNames = [
+  "Джек",
+  "Мария",
+  "Карен",
+  "Джеральд",
+  "Дмитрий",
+  "Грогу",
+  "СуперКот241",
+  "Марко",
+  "Мопс",
+  "OldMacdonald",
+  "RedFish095",
+  "Harold",
+  "Frank",
+  "Daniel",
+  "Robert"
+];
+
+let createComment = () => ({
+  id : generateRandomId(1, 1000),
+  avatar : generateAvatar(),
+  message : getRandomArrayElement(commentMessages),
+  name : getRandomArrayElement(commentNames)
+});
+
+const createPhoto = () => ({
+  id : generateId(),
+  url : generateUrl(),
+  description : generateDescription(),
+  likes : getRandomInteger(15, 200),
+  comments : Array.from({length: getRandomInteger(0, 30)}, createComment)
+});
+
+const photos = Array.from({length: photoQuantity}, createPhoto);
+
+console.log(photos);

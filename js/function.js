@@ -3,11 +3,12 @@ function checkStringLength(string, maxLength) {
 }
 
 function isPalindrome(string) {
-  let checkedString = string.replaceAll(' ', '');
-  checkedString = checkedString.toLowerCase();
+  const checkedString = string.replaceAll(' ', '').toLowerCase();
   let reversedString = '';
+
   for (let i = checkedString.length - 1; i > -1; i--) {
     reversedString += checkedString[i];
   }
+
   return reversedString === checkedString;
 }
