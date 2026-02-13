@@ -71,7 +71,7 @@ const generateId = function () {
 const generateUrl = function () {
   urlNumber += 1;
 
-  return 'photos/' + urlNumber + '.jpg';
+  return `photos/${ urlNumber }.jpg`;
 };
 
 const generateDescription = () => PHOTO_DESCRIPTIONS[descriptionNumber++];
@@ -88,7 +88,7 @@ const generateRandomId = function (min, max) {
   return currentId;
 };
 
-const generateAvatar = () => 'img/avatar-' + getRandomInteger(1, 6) + '.svg';
+const generateAvatar = () => `img/avatar-${ getRandomInteger(1, 6) }.svg`;
 
 const createComment = () => ({
   id : generateRandomId(1, 1000),
