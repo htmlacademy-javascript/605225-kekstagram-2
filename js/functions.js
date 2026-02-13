@@ -1,13 +1,13 @@
 const timeToMinutes = (timeInHours) => {
-  let timeInMinutes = +(timeInHours.split(':')[0]) * 60 + +(timeInHours.split(':')[1]);
+  const timeInMinutes = Number(timeInHours.split(':')[0]) * 60 + Number(timeInHours.split(':')[1]);
 
   return timeInMinutes;
 };
 
 const checkMeetingLength = (startDayTime, endDayTime, startMeetingTime, meetingLength) => {
-  let startDayMinutes = timeToMinutes(startDayTime);
-  let endDayMinutes = timeTotimeToMinutes(endDayTime);
-  let startMeetingMinutes = timeToMinutes(startMeetingTime);
+  const startDayMinutes = timeToMinutes(startDayTime);
+  const endDayMinutes = timeToMinutes(endDayTime);
+  const startMeetingMinutes = timeToMinutes(startMeetingTime);
 
   return (startMeetingMinutes + meetingLength <= endDayMinutes) && (startMeetingMinutes + meetingLength > startDayMinutes) && (startDayMinutes <= startMeetingMinutes);
 };
