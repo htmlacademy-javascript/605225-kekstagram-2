@@ -1,4 +1,7 @@
 import { createPhotosData } from './data.js';
-import './pictures.js';
+import { renderPictures } from './pictures.js';
+import { addModalHandler } from './full-picture.js';
 
-console.log(createPhotosData());
+const data = createPhotosData();
+renderPictures(data);
+addModalHandler(data);
