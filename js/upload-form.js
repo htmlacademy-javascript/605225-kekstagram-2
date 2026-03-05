@@ -1,5 +1,14 @@
 import { isEscapeKey } from './util.js';
 
+const HASHTAG_REGEX = /^#[a-zа-яё0-9]{1,19}$/i;
+const MAX_HASHTAG_AMOUNT = 5;
+const ERROR_MESSAGES = {
+  amount: 'Не больше 5 хэштегов',
+  regex: 'Хэштег должен начинаться с #, содержать от 1 до 19 символов, только буквы и цифры',
+  unique: 'Хэштеги не должны повторяться'
+};
+let errorMessage = '';
+
 const imageUploadField = document.querySelector('.img-upload__input');
 const imageUploadOverlay = document.querySelector('.img-upload__overlay');
 const imageUploadForm = document.querySelector('.img-upload__form');
@@ -21,14 +30,16 @@ const validateHashtag = (value) => {
 
   const hashtagList = value.trim().split(' ');
 
-  if (hashtagList.length > 5) {
+  if (hashtagList.length > MAX_HASHTAG_AMOUNT) {
+    errorMessage = ERROR_MESSAGES.amount;
+
     return false;
   }
 
-  const hashtagRegex = /^#[a-zа-яё0-9]{1,19}$/i;
-
   for (let i = 0; i < hashtagList.length; i++) {
-    if (!hashtagRegex.test(hashtagList[i])) {
+    if (!HASHTAG_REGEX.test(hashtagList[i])) {
+      errorMessage = ERROR_MESSAGES.regex;
+
       return false;
     }
   }
@@ -36,67 +47,58 @@ const validateHashtag = (value) => {
   const uniqueHashtags = new Set(hashtagList.map((tag) => tag.toLowerCase()));
 
   if (uniqueHashtags.size !== hashtagList.length) {
+    errorMessage = ERROR_MESSAGES.unique;
+
     return false;
   }
 
   return true;
 };
 
-const getErrorMessage = (value) => {
-  const hashtagList = value.trim().split(' ');
+const getErrorMessage = () => errorMessage;
 
-  if (hashtagList.length > 5) {
-    return 'Не больше 5 хэштегов';
-  }
-
-  const hashtagRegex = /^#[a-zа-яё0-9]{1,19}$/i;
-
-  for (let i = 0; i < hashtagList.length; i++) {
-    if (!hashtagRegex.test(hashtagList[i])) {
-      return 'Хэштег должен начинаться с #, содержать от 1 до 19 символов, только буквы и цифры';
-    }
-  }
-
-  const uniqueHashtags = new Set(hashtagList.map((tag) => tag.toLowerCase()));
-
-  if (uniqueHashtags.size !== hashtagList.length) {
-    return 'Хэштеги не должны повторяться';
-  }
-};
-
-pristine.addValidator(hashtagField, validateHashtag, getErrorMessage);
-
-const openOverlay = () => {
+const openFormModal = () => {
   imageUploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
 };
 
-const closeOverlay = () => {
+const closeFormModal = () => {
   imageUploadOverlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
   imageUploadForm.reset();
+  pristine.reset();
+  errorMessage = '';
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
 function onDocumentKeydown(evt) {
   if (isEscapeKey(evt) && document.activeElement !== hashtagField && document.activeElement !== commentField) {
     evt.preventDefault();
-    closeOverlay();
+    closeFormModal();
   }
 }
 
+const onUploadFieldChange = () => openFormModal();
+
+const onCloseButtonClick = () => closeFormModal();
+
+const onFormSubmit = (evt) => {
+  evt.preventDefault();
+
+  const isValid = pristine.validate();
+
+  if (isValid) {
+    // eslint-disable-next-line no-console
+    console.log('Форма отправлена');
+  }
+};
+
 const addUploadFormHandler = () => {
-  imageUploadField.addEventListener('change', () => {
-    openOverlay();
-  });
-  formCloseButton.addEventListener('click', () => {
-    closeOverlay();
-  });
-  imageUploadForm.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    pristine.validate();
-  });
+  imageUploadField.addEventListener('change', onUploadFieldChange);
+  formCloseButton.addEventListener('click', onCloseButtonClick);
+  pristine.addValidator(hashtagField, validateHashtag, getErrorMessage);
+  imageUploadForm.addEventListener('submit', onFormSubmit);
 };
 
 export { addUploadFormHandler };
