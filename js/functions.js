@@ -12,4 +12,5 @@ const checkMeetingLength = (startDayTime, endDayTime, startMeetingTime, meetingL
   return (startMeetingMinutes + meetingLength <= endDayMinutes) && (startMeetingMinutes + meetingLength > startDayMinutes) && (startDayMinutes <= startMeetingMinutes);
 };
 
+// eslint-disable-next-line no-console
 console.log(checkMeetingLength('14:00', '17:30', '08:0', 370));
