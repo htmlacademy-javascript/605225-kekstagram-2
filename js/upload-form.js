@@ -1,4 +1,6 @@
 import { isEscapeKey } from './util.js';
+import { initScale, resetScale } from './scale.js';
+import { initEffects, resetEffects } from './effects.js';
 
 const HASHTAG_REGEX = /^#[a-zа-яё0-9]{1,19}$/i;
 const MAX_HASHTAG_AMOUNT = 5;
@@ -7,7 +9,6 @@ const ERROR_MESSAGES = {
   regex: 'Хэштег должен начинаться с #, содержать от 1 до 19 символов, только буквы и цифры',
   unique: 'Хэштеги не должны повторяться'
 };
-let errorMessage = '';
 
 const imageUploadField = document.querySelector('.img-upload__input');
 const imageUploadOverlay = document.querySelector('.img-upload__overlay');
@@ -15,6 +16,9 @@ const imageUploadForm = document.querySelector('.img-upload__form');
 const formCloseButton = document.querySelector('.img-upload__cancel');
 const hashtagField = document.querySelector('.text__hashtags');
 const commentField = document.querySelector('.text__description');
+const effectLevelSlider = document.querySelector('.effect-level__slider');
+
+let errorMessage = '';
 
 const pristine = new Pristine(imageUploadForm, {
   classTo: 'img-upload__field-wrapper',
@@ -61,6 +65,8 @@ const openFormModal = () => {
   imageUploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
+  initScale();
+  initEffects();
 };
 
 const closeFormModal = () => {
@@ -70,6 +76,8 @@ const closeFormModal = () => {
   pristine.reset();
   errorMessage = '';
   document.removeEventListener('keydown', onDocumentKeydown);
+  resetScale();
+  resetEffects();
 };
 
 function onDocumentKeydown(evt) {
@@ -99,6 +107,16 @@ const addUploadFormHandler = () => {
   formCloseButton.addEventListener('click', onCloseButtonClick);
   pristine.addValidator(hashtagField, validateHashtag, getErrorMessage);
   imageUploadForm.addEventListener('submit', onFormSubmit);
+
+  noUiSlider.create(effectLevelSlider, {
+    range: {
+      min: 0,
+      max: 1,
+    },
+    start: 0,
+    step: 0.1,
+    connect: 'lower',
+  });
 };
 
 export { addUploadFormHandler };
