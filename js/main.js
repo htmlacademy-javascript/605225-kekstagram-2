@@ -1,9 +1,11 @@
-import { createPhotosData } from './data.js';
 import { renderPictures } from './pictures.js';
 import { addModalHandler } from './full-picture.js';
 import { addUploadFormHandler } from './upload-form.js';
+import { getData } from './api.js';
 
-const data = createPhotosData();
-renderPictures(data);
-addModalHandler(data);
+getData().then((data) => {
+  renderPictures(data);
+  addModalHandler(data);
+});
+
 addUploadFormHandler();
