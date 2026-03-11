@@ -1,6 +1,4 @@
-import { showDataErrorMessage } from './status-messages.js';
-
-const BASE_URL = 'https://31.javascript.htmlacadem.pro/kekstagram';
+const BASE_URL = 'https://31.javascript.htmlacademy.pro/kekstagram';
 const route = {
   GET_DATA: '/data',
   SEND_DATA: '/',
@@ -12,9 +10,6 @@ const getData = () => fetch(`${BASE_URL}${route.GET_DATA}`)
       throw new Error('Data error');
     }
     return response.json();
-  })
-  .catch(() => {
-    showDataErrorMessage();
   });
 
 const sendData = (body) => fetch(
@@ -27,9 +22,6 @@ const sendData = (body) => fetch(
     if (!response.ok) {
       throw new Error('Upload error');
     }
-  })
-  .catch(() => {
-    throw new Error('Upload error');
   });
 
 export { getData, sendData };

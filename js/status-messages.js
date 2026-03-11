@@ -18,6 +18,7 @@ const showDataErrorMessage = () => {
 const showUploadSuccessMessage = () => {
   const formSuccessMessage = formSuccessTemplate.cloneNode(true);
   const successMessageCloseButton = formSuccessMessage.querySelector('.success__button');
+
   successMessageCloseButton.addEventListener('click', closeUploadSuccessMessage);
   document.addEventListener('keydown', closeUploadSuccessMessage);
   document.addEventListener('click', closeUploadSuccessMessage);
@@ -27,33 +28,34 @@ const showUploadSuccessMessage = () => {
 const showUploadErrorMessage = () => {
   const formErrorMessage = formErrorTemplate.cloneNode(true);
   const errorMessageCloseButton = formErrorMessage.querySelector('.error__button');
+
   errorMessageCloseButton.addEventListener('click', closeUploadErrorMessage);
   document.addEventListener('keydown', closeUploadErrorMessage);
   document.addEventListener('click', closeUploadErrorMessage);
   document.body.append(formErrorMessage);
 };
 
+const closeSuccessPopup = () => {
+  document.removeEventListener('keydown', closeUploadSuccessMessage);
+  document.removeEventListener('click', closeUploadSuccessMessage);
+  document.querySelector('.success').remove();
+};
+
+const closeErrorPopup = () => {
+  document.removeEventListener('keydown', closeUploadErrorMessage);
+  document.removeEventListener('click', closeUploadErrorMessage);
+  document.querySelector('.error').remove();
+};
+
 function closeUploadSuccessMessage (evt) {
-  if (isEscapeKey(evt) || !evt.target.closest('.success_inner')) {
-    document.removeEventListener('keydown', closeUploadSuccessMessage);
-    document.removeEventListener('click', closeUploadSuccessMessage);
-    document.querySelector('.success').remove();
-  } else if (evt.target.classList.contains('.success__button')) {
-    document.removeEventListener('keydown', closeUploadSuccessMessage);
-    document.removeEventListener('click', closeUploadSuccessMessage);
-    evt.target.closest('.success').remove();
+  if (isEscapeKey(evt) || !evt.target.closest('.success_inner') || evt.target.classList.contains('.success__button')) {
+    closeSuccessPopup();
   }
 }
 
 function closeUploadErrorMessage (evt) {
-  if (isEscapeKey(evt) || !evt.target.closest('.error_inner')) {
-    document.removeEventListener('keydown', closeUploadErrorMessage);
-    document.removeEventListener('click', closeUploadErrorMessage);
-    document.querySelector('.error').remove();
-  } else if (evt.target.classList.contains('.error__button')) {
-    document.removeEventListener('keydown', closeUploadErrorMessage);
-    document.removeEventListener('click', closeUploadErrorMessage);
-    evt.target.closest('.error').remove();
+  if (isEscapeKey(evt) || !evt.target.closest('.error_inner') || evt.target.classList.contains('.error__button')) {
+    closeErrorPopup();
   }
 }
 
