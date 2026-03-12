@@ -2,6 +2,8 @@ const picturesBlock = document.querySelector('.pictures');
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
 const renderPictures = (picturesData) => {
+  picturesBlock.querySelectorAll('.picture').forEach((element) => element.remove());
+
   const picturesBlockFragment = document.createDocumentFragment();
 
   picturesData.forEach(({id, url, description, likes, comments}) => {
