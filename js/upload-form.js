@@ -1,6 +1,8 @@
 import { isEscapeKey } from './util.js';
 import { initScale, resetScale } from './scale.js';
 import { initEffects, resetEffects } from './effects.js';
+import { sendData } from './api.js';
+import { showUploadSuccessMessage, showUploadErrorMessage } from './status-messages.js';
 
 const HASHTAG_REGEX = /^#[a-zа-яё0-9]{1,19}$/i;
 const MAX_HASHTAG_AMOUNT = 5;
@@ -97,8 +99,14 @@ const onFormSubmit = (evt) => {
   const isValid = pristine.validate();
 
   if (isValid) {
-    // eslint-disable-next-line no-console
-    console.log('Форма отправлена');
+    sendData(new FormData(evt.target))
+      .then(() => {
+        closeFormModal();
+        showUploadSuccessMessage();
+      })
+      .catch(() => {
+        showUploadErrorMessage();
+      });
   }
 };
 

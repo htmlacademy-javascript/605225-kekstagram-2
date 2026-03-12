@@ -59,7 +59,7 @@ const addModalHandler = (picturesData) => {
   picturesContainer.addEventListener('click', (evt) => {
     const targetPictureId = Number(evt.target.dataset.pictureId);
 
-    if (!targetPictureId) {
+    if (Number.isNaN(targetPictureId)) {
       return;
     }
 
