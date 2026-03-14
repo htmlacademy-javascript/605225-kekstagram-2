@@ -6,11 +6,9 @@ const getRandomInteger = (a, b) => {
   return Math.floor(result);
 };
 
-const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
-
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-function debounce (callback, timeoutDelay) {
+function debounce (callback, timeoutDelay = 500) {
   let timeoutId;
 
   return (...rest) => {
@@ -19,4 +17,15 @@ function debounce (callback, timeoutDelay) {
   };
 }
 
-export { getRandomInteger, getRandomArrayElement, isEscapeKey, debounce };
+const shuffleArray = (dataList) => {
+  const randomData = dataList.slice();
+
+  for (let i = randomData.length - 1; i > 0; i--) {
+    const j = getRandomInteger(0, i);
+    [randomData[i], randomData[j]] = [randomData[j], randomData[i]];
+  }
+
+  return randomData;
+};
+
+export { getRandomInteger, isEscapeKey, debounce, shuffleArray };
