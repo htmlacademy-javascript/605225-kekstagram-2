@@ -48,13 +48,13 @@ const closeErrorPopup = () => {
 };
 
 function closeUploadSuccessMessage (evt) {
-  if (isEscapeKey(evt) || !evt.target.closest('.success_inner') || evt.target.classList.contains('.success__button')) {
+  if (isEscapeKey(evt) || (!evt.target.closest('.success__inner') && !evt.target.classList.contains('success__inner')) || evt.target.classList.contains('success__button')) {
     closeSuccessPopup();
   }
 }
 
 function closeUploadErrorMessage (evt) {
-  if (isEscapeKey(evt) || !evt.target.closest('.error_inner') || evt.target.classList.contains('.error__button')) {
+  if (isEscapeKey(evt) || (!evt.target.closest('.error_inner') && !evt.target.classList.contains('error__inner')) || evt.target.classList.contains('.error__button')) {
     closeErrorPopup();
   }
 }
