@@ -11,10 +11,12 @@ const ERROR_MESSAGES = {
   regex: 'Хэштег должен начинаться с #, содержать от 1 до 19 символов, только буквы и цифры',
   unique: 'Хэштеги не должны повторяться'
 };
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
 const imageUploadField = document.querySelector('.img-upload__input');
 const imageUploadOverlay = document.querySelector('.img-upload__overlay');
 const imageUploadForm = document.querySelector('.img-upload__form');
+const imagePreview = document.querySelector('.img-upload__preview img');
 const formCloseButton = document.querySelector('.img-upload__cancel');
 const hashtagField = document.querySelector('.text__hashtags');
 const commentField = document.querySelector('.text__description');
@@ -63,10 +65,22 @@ const validateHashtag = (value) => {
 
 const getErrorMessage = () => errorMessage;
 
+const setUploadPreview = () => {
+  const file = imageUploadField.files[0];
+  const fileName = file.name.toLowerCase();
+
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+  if (matches) {
+    imagePreview.src = URL.createObjectURL(file);
+  }
+};
+
 const openFormModal = () => {
   imageUploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
+  setUploadPreview();
   initScale();
   initEffects();
 };
