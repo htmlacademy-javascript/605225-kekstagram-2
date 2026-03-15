@@ -1,8 +1,6 @@
 import { isEscapeKey } from './util.js';
 
 const COMMENT_AMOUNT = 5;
-let currentAmount = COMMENT_AMOUNT;
-let commentsLoaderData;
 
 const fullPictureModal = document.querySelector('.big-picture');
 const picturesContainer = document.querySelector('.pictures');
@@ -13,6 +11,9 @@ const loadComments = fullPictureModal.querySelector('.comments-loader');
 const imageContainer = fullPictureModal.querySelector('.big-picture__img');
 const pictureInfo = fullPictureModal.querySelector('.social__header');
 const commentsList = fullPictureModal.querySelector('.social__comments');
+
+let currentAmount = COMMENT_AMOUNT;
+let commentsLoaderData;
 
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
@@ -30,6 +31,7 @@ const renderComments = (commentData) => {
     const commentText = document.createElement('p');
     commentItem.classList.add('social__comment');
     commentImage.classList.add('social__picture');
+    commentText.classList.add('social__text');
     commentImage.src = avatar;
     commentImage.width = 35;
     commentImage.height = 35;
@@ -42,7 +44,7 @@ const renderComments = (commentData) => {
 };
 
 const openModal = (smallPictureData) => {
-  commentsLoaderData = smallPictureData;
+  commentsLoaderData = smallPictureData.comments;
 
   fullPictureModal.classList.remove('hidden');
   document.body.classList.add('modal-open');
@@ -73,21 +75,22 @@ function closeModal() {
   currentAmount = COMMENT_AMOUNT;
   commentCount.textContent = COMMENT_AMOUNT;
   loadComments.classList.remove('hidden');
+  commentsLoaderData = null;
 }
 
 function loadMoreComments() {
   currentAmount += COMMENT_AMOUNT;
 
-  if (currentAmount > commentsLoaderData.comments.length) {
-    currentAmount = commentsLoaderData.comments.length;
+  if (currentAmount > commentsLoaderData.length) {
+    currentAmount = commentsLoaderData.length;
     commentCount.textContent = currentAmount;
-    renderComments(commentsLoaderData.comments);
+    renderComments(commentsLoaderData);
     loadComments.classList.add('hidden');
     return;
   }
 
   commentCount.textContent = currentAmount;
-  renderComments(commentsLoaderData.comments.slice(0, currentAmount));
+  renderComments(commentsLoaderData.slice(0, currentAmount));
 }
 
 const addModalHandler = (picturesData) => {
