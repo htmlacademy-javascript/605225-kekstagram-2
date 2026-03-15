@@ -11,10 +11,18 @@ const ERROR_MESSAGES = {
   regex: 'Хэштег должен начинаться с #, содержать от 1 до 19 символов, только буквы и цифры',
   unique: 'Хэштеги не должны повторяться'
 };
+const SubmitButtonText = {
+  IDLE: 'Опубликовать',
+  SENDING: 'Публикация...'
+};
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
 const imageUploadField = document.querySelector('.img-upload__input');
 const imageUploadOverlay = document.querySelector('.img-upload__overlay');
 const imageUploadForm = document.querySelector('.img-upload__form');
+const formSubmitButton = document.querySelector('.img-upload__submit');
+const imagePreview = document.querySelector('.img-upload__preview img');
+const imageEffectsPreviews = document.querySelectorAll('.effects__preview');
 const formCloseButton = document.querySelector('.img-upload__cancel');
 const hashtagField = document.querySelector('.text__hashtags');
 const commentField = document.querySelector('.text__description');
@@ -34,7 +42,7 @@ const validateHashtag = (value) => {
     return true;
   }
 
-  const hashtagList = value.trim().split(' ');
+  const hashtagList = value.trim().split(/\s+/);
 
   if (hashtagList.length > MAX_HASHTAG_AMOUNT) {
     errorMessage = ERROR_MESSAGES.amount;
@@ -63,10 +71,28 @@ const validateHashtag = (value) => {
 
 const getErrorMessage = () => errorMessage;
 
+const setUploadPreview = () => {
+  const file = imageUploadField.files[0];
+  const fileName = file.name.toLowerCase();
+
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+  if (matches) {
+    const imageUrl = URL.createObjectURL(file);
+
+    imagePreview.src = imageUrl;
+
+    imageEffectsPreviews.forEach((preview) => {
+      preview.style.backgroundImage = `url(${imageUrl})`;
+    });
+  }
+};
+
 const openFormModal = () => {
   imageUploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
+  setUploadPreview();
   initScale();
   initEffects();
 };
@@ -83,7 +109,7 @@ const closeFormModal = () => {
 };
 
 function onDocumentKeydown(evt) {
-  if (isEscapeKey(evt) && document.activeElement !== hashtagField && document.activeElement !== commentField) {
+  if (isEscapeKey(evt) && document.activeElement !== hashtagField && document.activeElement !== commentField && !document.querySelector('.error')) {
     evt.preventDefault();
     closeFormModal();
   }
@@ -93,12 +119,24 @@ const onUploadFieldChange = () => openFormModal();
 
 const onCloseButtonClick = () => closeFormModal();
 
+const blockSubmitButton = () => {
+  formSubmitButton.disabled = true;
+  formSubmitButton.textContent = SubmitButtonText.SENDING;
+};
+
+const unblockSubmitButton = () => {
+  formSubmitButton.disabled = false;
+  formSubmitButton.textContent = SubmitButtonText.IDLE;
+};
+
+
 const onFormSubmit = (evt) => {
   evt.preventDefault();
 
   const isValid = pristine.validate();
 
   if (isValid) {
+    blockSubmitButton();
     sendData(new FormData(evt.target))
       .then(() => {
         closeFormModal();
@@ -106,7 +144,8 @@ const onFormSubmit = (evt) => {
       })
       .catch(() => {
         showUploadErrorMessage();
-      });
+      })
+      .finally(unblockSubmitButton);
   }
 };
 
@@ -124,6 +163,17 @@ const addUploadFormHandler = () => {
     start: 0,
     step: 0.1,
     connect: 'lower',
+    format: {
+      to: function (value) {
+        if (Number.isInteger(value)) {
+          return value.toFixed(0);
+        }
+        return value.toFixed(1);
+      },
+      from: function (value) {
+        return parseFloat(value);
+      },
+    },
   });
 };
 

@@ -1,13 +1,19 @@
 import { isEscapeKey } from './util.js';
 
+const COMMENT_AMOUNT = 5;
+
 const fullPictureModal = document.querySelector('.big-picture');
 const picturesContainer = document.querySelector('.pictures');
 const modalCloseButton = fullPictureModal.querySelector('.big-picture__cancel');
-const commentCount = fullPictureModal.querySelector('.social__comment-count');
+const commentCount = fullPictureModal.querySelector('.social__comment-shown-count');
+const totalComments = fullPictureModal.querySelector('.social__comment-total-count');
 const loadComments = fullPictureModal.querySelector('.comments-loader');
 const imageContainer = fullPictureModal.querySelector('.big-picture__img');
 const pictureInfo = fullPictureModal.querySelector('.social__header');
 const commentsList = fullPictureModal.querySelector('.social__comments');
+
+let currentAmount = COMMENT_AMOUNT;
+let commentsLoaderData;
 
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
@@ -17,12 +23,15 @@ const onDocumentKeydown = (evt) => {
 };
 
 const renderComments = (commentData) => {
+  commentsList.innerHTML = '';
+
   commentData.forEach(({avatar, message, name}) => {
     const commentItem = document.createElement('li');
     const commentImage = document.createElement('img');
     const commentText = document.createElement('p');
     commentItem.classList.add('social__comment');
     commentImage.classList.add('social__picture');
+    commentText.classList.add('social__text');
     commentImage.src = avatar;
     commentImage.width = 35;
     commentImage.height = 35;
@@ -35,24 +44,53 @@ const renderComments = (commentData) => {
 };
 
 const openModal = (smallPictureData) => {
+  commentsLoaderData = smallPictureData.comments;
+
   fullPictureModal.classList.remove('hidden');
   document.body.classList.add('modal-open');
-  commentCount.classList.add('hidden');
-  loadComments.classList.add('hidden');
+  loadComments.addEventListener('click', loadMoreComments);
   document.addEventListener('keydown', onDocumentKeydown);
 
   imageContainer.querySelector('img').src = smallPictureData.url;
   pictureInfo.querySelector('.likes-count').textContent = smallPictureData.likes;
   pictureInfo.querySelector('.social__caption').textContent = smallPictureData.description;
+  totalComments.textContent = smallPictureData.comments.length;
 
   commentsList.innerHTML = '';
-  renderComments(smallPictureData.comments);
+
+  if (smallPictureData.comments.length < COMMENT_AMOUNT) {
+    renderComments(smallPictureData.comments);
+    loadComments.classList.add('hidden');
+    commentCount.textContent = smallPictureData.comments.length;
+  } else {
+    renderComments(smallPictureData.comments.slice(0, COMMENT_AMOUNT));
+  }
 };
 
 function closeModal() {
   fullPictureModal.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
+  loadComments.removeEventListener('click', loadMoreComments);
+  currentAmount = COMMENT_AMOUNT;
+  commentCount.textContent = COMMENT_AMOUNT;
+  loadComments.classList.remove('hidden');
+  commentsLoaderData = null;
+}
+
+function loadMoreComments() {
+  currentAmount += COMMENT_AMOUNT;
+
+  if (currentAmount > commentsLoaderData.length) {
+    currentAmount = commentsLoaderData.length;
+    commentCount.textContent = currentAmount;
+    renderComments(commentsLoaderData);
+    loadComments.classList.add('hidden');
+    return;
+  }
+
+  commentCount.textContent = currentAmount;
+  renderComments(commentsLoaderData.slice(0, currentAmount));
 }
 
 const addModalHandler = (picturesData) => {
