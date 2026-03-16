@@ -15,13 +15,45 @@ const showDataErrorMessage = () => {
   }, ALERT_SHOW_TIME);
 };
 
+const onCloseSuccessButtonClick = () => {
+  closeSuccessPopup();
+};
+
+const onDocumentKeydownSuccess = (evt) => {
+  if (isEscapeKey(evt)) {
+    closeSuccessPopup();
+  }
+};
+
+const onDocumentClickSuccess = (evt) => {
+  if (!evt.target.closest('.success__inner')) {
+    closeSuccessPopup();
+  }
+};
+
+const onCloseErrorButtonClick = () => {
+  closeErrorPopup();
+};
+
+const onDocumentKeydownError = (evt) => {
+  if (isEscapeKey(evt)) {
+    closeErrorPopup();
+  }
+};
+
+const onDocumentClickError = (evt) => {
+  if (!evt.target.closest('.error__inner')) {
+    closeErrorPopup();
+  }
+};
+
 const showUploadSuccessMessage = () => {
   const formSuccessMessage = formSuccessTemplate.cloneNode(true);
   const successMessageCloseButton = formSuccessMessage.querySelector('.success__button');
 
-  successMessageCloseButton.addEventListener('click', closeUploadSuccessMessage);
-  document.addEventListener('keydown', closeUploadSuccessMessage);
-  document.addEventListener('click', closeUploadSuccessMessage);
+  successMessageCloseButton.addEventListener('click', onCloseSuccessButtonClick);
+  document.addEventListener('keydown', onDocumentKeydownSuccess);
+  document.addEventListener('click', onDocumentClickSuccess);
   document.body.append(formSuccessMessage);
 };
 
@@ -29,34 +61,22 @@ const showUploadErrorMessage = () => {
   const formErrorMessage = formErrorTemplate.cloneNode(true);
   const errorMessageCloseButton = formErrorMessage.querySelector('.error__button');
 
-  errorMessageCloseButton.addEventListener('click', closeUploadErrorMessage);
-  document.addEventListener('keydown', closeUploadErrorMessage);
-  document.addEventListener('click', closeUploadErrorMessage);
+  errorMessageCloseButton.addEventListener('click', onCloseErrorButtonClick);
+  document.addEventListener('keydown', onDocumentKeydownError);
+  document.addEventListener('click', onDocumentClickError);
   document.body.append(formErrorMessage);
 };
 
-const closeSuccessPopup = () => {
-  document.removeEventListener('keydown', closeUploadSuccessMessage);
-  document.removeEventListener('click', closeUploadSuccessMessage);
+function closeSuccessPopup() {
+  document.removeEventListener('keydown', onDocumentKeydownSuccess);
+  document.removeEventListener('click', onDocumentClickSuccess);
   document.querySelector('.success').remove();
-};
-
-const closeErrorPopup = () => {
-  document.removeEventListener('keydown', closeUploadErrorMessage);
-  document.removeEventListener('click', closeUploadErrorMessage);
-  document.querySelector('.error').remove();
-};
-
-function closeUploadSuccessMessage (evt) {
-  if (isEscapeKey(evt) || (!evt.target.closest('.success__inner') && !evt.target.classList.contains('success__inner')) || evt.target.classList.contains('success__button')) {
-    closeSuccessPopup();
-  }
 }
 
-function closeUploadErrorMessage (evt) {
-  if (isEscapeKey(evt) || (!evt.target.closest('.error_inner') && !evt.target.classList.contains('error__inner')) || evt.target.classList.contains('.error__button')) {
-    closeErrorPopup();
-  }
+function closeErrorPopup() {
+  document.removeEventListener('keydown', onDocumentKeydownError);
+  document.removeEventListener('click', onDocumentClickError);
+  document.querySelector('.error').remove();
 }
 
 export { showDataErrorMessage, showUploadSuccessMessage, showUploadErrorMessage };
