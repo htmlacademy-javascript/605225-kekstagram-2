@@ -48,7 +48,7 @@ const openModal = (smallPictureData) => {
 
   fullPictureModal.classList.remove('hidden');
   document.body.classList.add('modal-open');
-  loadComments.addEventListener('click', loadMoreComments);
+  loadComments.addEventListener('click', onLoadCommentsButtonClick);
   document.addEventListener('keydown', onDocumentKeydown);
 
   imageContainer.querySelector('img').src = smallPictureData.url;
@@ -71,14 +71,16 @@ function closeModal() {
   fullPictureModal.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
-  loadComments.removeEventListener('click', loadMoreComments);
+  loadComments.removeEventListener('click', onLoadCommentsButtonClick);
   currentAmount = COMMENT_AMOUNT;
   commentCount.textContent = COMMENT_AMOUNT;
   loadComments.classList.remove('hidden');
   commentsLoaderData = null;
 }
 
-function loadMoreComments() {
+const onCloseModalButtonClick = () => closeModal();
+
+function onLoadCommentsButtonClick() {
   currentAmount += COMMENT_AMOUNT;
 
   if (currentAmount > commentsLoaderData.length) {
@@ -108,7 +110,7 @@ const addModalHandler = (picturesData) => {
     }
   });
 
-  modalCloseButton.addEventListener('click', closeModal);
+  modalCloseButton.addEventListener('click', onCloseModalButtonClick);
 };
 
 export { addModalHandler };
